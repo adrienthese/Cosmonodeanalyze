@@ -1305,19 +1305,19 @@ pre[class*="language-"] {
 </ul>
 <p>Ces lignes permettent de mettre à jour les données du RTC à partir des données transmises par le GPS. </p>
 <p>L'initialisation du RTC avec <code>rtc_init()</code> (cf photo ci-dessous) quant à elle ne s'effectue qu'une seule fois dans la fonction <code>setup()</code>. Le RTC s'allume avec une valeur par défaut et dès que <code>rtc.begin</code> est appelée le RTC commence à compter le temps. Si FAKEGPS est à 1, alors rien ne se fait. Si FAKEGPS est à 0, alors <code>rtc_init()</code> appelle <code>gps_init()</code> qui appelle <code>gps_read()</code>. Dans ce cas là les données RTC sont mises à jour. <img data-align="center" width="268" alt="" src="https://raw.githubusercontent.com/adrienthese/imagesmarkdown/refs/heads/main/RTC%20initialisation.PNG" title=""></p>
-<p>Ces deux cas peuvent permettre de faire des tests (en changeant FAKEGPS à 0 ou 1). L'un sans utilisation de GPS grâce à <code>rtc_init()</code>, l'autre avec une mise à jour des données en temps réel grâce à <code>gps_read()</code>.</p>
+<p>Ces deux cas peuvent permettre de faire des tests. L'un sans mise à jour de la date lorsque <code>FAKEGPS</code> est à 1, l'autre avec une mise à jour des données en temps réel lorsque <code>FAKEGPS</code>.</p> est à 0.
 <p>La mise à jour régulière du RTC permet de planifier la mise en veille du microcontrôleur et donc d'économiser de l'énergie. </p>
 <hr>
 <h3 class="atx" id="configuration-de-land39alarme">Configuration de l'alarme</h3>
 <img data-align="center" alt="" title="" src="https://raw.githubusercontent.com/adrienthese/imagesmarkdown/refs/heads/main/Alarme%20init.PNG">
 
 <ul>
-<li>Lorsque FAKECALENDAR est à 1 , le microcontrôleur configure une alarme toutes 30 secondes avec <code>rtc.getEpoch() + 30</code> afin de tester le mécanisme du réveil.</li>
+<li>Lorsque <code>FAKECALENDAR</code> est à 1 , le microcontrôleur configure une alarme toutes 30 secondes avec <code>rtc.getEpoch() + 30</code> afin de tester le mécanisme du réveil.</li>
 </ul>
 <img data-align="center" alt="lecturedate" src="https://raw.githubusercontent.com/adrienthese/imagesmarkdown/refs/heads/main/Lecture%20date.PNG" title="">
 
 <ul>
-<li><p>Sinon, lorsque FAKECALENDAR est à 0, le microcontrôleur ouvre le calendrier indiquant les horaires de passage du satellite Kinéis stocké sur la carte SD avec <code>SD.open</code>. </p>
+<li><p>Sinon, lorsque <code>FAKECALENDAR</code> est à 0, le microcontrôleur ouvre le calendrier indiquant les horaires de passage du satellite Kinéis stocké sur la carte SD avec <code>SD.open</code>. </p>
 </li>
 <li><p>Tant qu'il y a des données à lire dans le fichier (boucle while) il compare la date actuelle avec la date de l'alarme suivante.</p>
 </li>
@@ -1344,8 +1344,9 @@ pre[class*="language-"] {
 <img data-align="center" alt="mesures" src="https://raw.githubusercontent.com/adrienthese/imagesmarkdown/refs/heads/main/Prise_de_temp%C3%A9ratures.PNG" title="">
 
 <p>Les mesures sont lues avec <code>sensor_read()</code>. Par exemple avec le capteur TMP102 :</p>
-<p><code>worker.tmp102.raw = Wire.read(); worker.tmp102.raw &lt;&lt;= 8;</code></p>
-<p>A la première ligne le microcontrôleur lit le premier octet de la réponse du capteur TMP102 et le stocke puis à la deuxième ligne il lit le deuxième octet et le combine avec le premier pour former une valeur 16 bits (car le TMP102 envoie la température sur 2 octets).</p>
+<p><code>worker.tmp102.raw = Wire.read();</code></p>
+<p><code>worker.tmp102.raw &lt;&lt;= 8;</code></p>
+<p>A la première ligne, le microcontrôleur lit le premier octet de la réponse du capteur TMP102 et le stocke puis à la deuxième ligne il lit le deuxième octet et le combine avec le premier pour former une valeur 16 bits (car le TMP102 envoie la température sur 2 octets).</p>
 <hr>
 <h3 class="atx" id="envoi-des-donnees-au-satellite-kineis">Envoi des données au satellite Kinéis</h3>
 <img width="425" data-align="center" alt="envoiKINEIS" src="https://raw.githubusercontent.com/adrienthese/imagesmarkdown/refs/heads/main/EnvoiKINEIS.PNG" title="">
@@ -1353,7 +1354,7 @@ pre[class*="language-"] {
 <p>Si le microcontrôleur est réveillé (<code>worker.wakeup = true</code>) et si FAKEKINEIS est à 0 alors le code appelle <code>kineis_send()</code> pour envoyer les données. <code>kineis_send()</code> est décrit dans l'image ci-dessous :</p>
 <img data-align="center" alt="kiénisssend" title="" src="https://raw.githubusercontent.com/adrienthese/imagesmarkdown/refs/heads/main/Kineis_send.PNG">
 
-<p>Le module Kinéis s'allume avec <code>kineis_on()</code> puis prépare la commande AT+TX avec les données. <code>String ok = kineis_command(command)</code> permet d'envoyer la commande. Ensuite <code>String answer = kineis_answer()</code> lit la réponse du satellite. Enfin, <code>kineis_off()</code> éteint le module Kinéis. </p>
+<p>Le module Kinéis s'allume avec <code>kineis_on()</code> (la LED D7 s'allume quelques secondes) puis prépare la commande AT+TX avec les données. <code>String ok = kineis_command(command)</code> permet d'envoyer la commande. Ensuite <code>String answer = kineis_answer()</code> lit la réponse du satellite. Enfin, <code>kineis_off()</code> éteint le module Kinéis. </p>
 <hr>
 <h3 class="atx" id="mise-en-veille-du-microcontroleur">Mise en veille du microcontrôleur</h3>
 <img data-align="center" width="556" alt="veille" src="https://raw.githubusercontent.com/adrienthese/imagesmarkdown/refs/heads/main/Veilleprofonde.PNG" title="">
@@ -1367,4 +1368,5 @@ pre[class*="language-"] {
 </article>
 </body>
 </html>
+
 
