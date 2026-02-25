@@ -1304,7 +1304,7 @@ pre[class*="language-"] {
 </li>
 </ul>
 <p>Ces lignes permettent de mettre à jour les données du RTC à partir des données transmises par le GPS. </p>
-<p>L'initialisation du RTC avec <code>rtc_init()</code> (cf photo ci-dessous) quant à elle ne s'effectue qu'une seule fois. Si FAKEGPS est à 1, le RTC s'allume avec une valeur par défaut et dès que <code>rtc.begin</code> est appelée le RTC commence à compter le temps. Si FAKEGPS est à 0, alors <code>rtc_init()</code> renvoie <code>gps_init()</code> qui appelle <code>gps_read()</code>. Dans ce cas là les données RTC sont mises à jour. <img data-align="center" width="268" alt="" src="https://raw.githubusercontent.com/adrienthese/imagesmarkdown/refs/heads/main/RTC%20initialisation.PNG" title=""></p>
+<p>L'initialisation du RTC avec <code>rtc_init()</code> (cf photo ci-dessous) quant à elle ne s'effectue qu'une seule fois dans la fonction <code>setup()</code>. Le RTC s'allume avec une valeur par défaut et dès que <code>rtc.begin</code> est appelée le RTC commence à compter le temps. Si FAKEGPS est à 1, alors rien ne se fait. Si FAKEGPS est à 0, alors <code>rtc_init()</code> appelle <code>gps_init()</code> qui appelle <code>gps_read()</code>. Dans ce cas là les données RTC sont mises à jour. <img data-align="center" width="268" alt="" src="https://raw.githubusercontent.com/adrienthese/imagesmarkdown/refs/heads/main/RTC%20initialisation.PNG" title=""></p>
 <p>Ces deux cas peuvent permettre de faire des tests (en changeant FAKEGPS à 0 ou 1). L'un sans utilisation de GPS grâce à <code>rtc_init()</code>, l'autre avec une mise à jour des données en temps réel grâce à <code>gps_read()</code>.</p>
 <p>La mise à jour régulière du RTC permet de planifier la mise en veille du microcontrôleur et donc d'économiser de l'énergie. </p>
 <hr>
@@ -1367,3 +1367,4 @@ pre[class*="language-"] {
 </article>
 </body>
 </html>
+
